@@ -1,8 +1,9 @@
-### This Frontend Tempate
-- made by suhyeon
+## Musinsa Global HW
 
-# Before use Bun you have to [install](https://bun.sh/) Bun
-* curl https://bun.sh/install | bash 
-1. bun install - use bun => fast
-2. vite - fast
-3. fast + fast => so fast
+> `Yarn`, `Vite`, `React` 를 사용하였습니다.
+
+* Webpack 이 아닌 Vite 를 사용한점은 보다 더 빠르고
+* 프로덕션을 위해 고도로 최적화된 정적소스를 출력하도록 사전 구성된 Rollup과 코드를 번들로 묶는 빌드 명령입니다.
+* Vite 가 더 빠른 이유는 esbuild 를 이용하여 종속성을 미리 묶기 때문인데, esbuild 는  Go 언어로 작성된 매우 빠른 번들러로 Go 언어의 특화된 병렬처리로 빠르게 번들링 해줍니다. 
+* Vite는 ESM 을 통해 소스코드를 제공하는데, 이것은 본질적으로 브라우저가 번들러 작업의 일부를 인계받게 하는것입니다. Vite 는 브라우저가 요청할 때 요청에 따라 소스코드를 변환하고 제공하기만 하면 되고 조건부 동적 가져오기 뒤에 있는 코드는 현재 화면에서 실제로 사용되는 경우에만 처리됩니다. 
+* 
