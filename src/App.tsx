@@ -3,35 +3,46 @@ import { css, Global } from '@emotion/react';
 import { Router } from 'pages/Routes';
 import { ReactNode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Global
-        styles={css`
-          ${normalize}
-          h1, h2, h3, h4, h5, h6 {
-            font-size: 1em;
-            font-weight: normal;
-            margin: 0; /* or ‘0 0 1em’ if you’re so inclined */
-          }
-          * {
-            box-sizing: border-box;
-            padding: 0;
-            margin: 0;
-          }
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Global
+          styles={css`
+            ${normalize}
+            h1, h2, h3, h4, h5, h6 {
+              font-size: 1em;
+              font-weight: normal;
+              margin: 0; /* or ‘0 0 1em’ if you’re so inclined */
+            }
+            * {
+              box-sizing: border-box;
+              padding: 0;
+              margin: 0;
+            }
 
-          html,
-          body,
-          #root {
-            height: 100%;
-          }
-        `}
-      />
-      <Layout>
-        <Router />
-      </Layout>
-    </BrowserRouter>
+            html,
+            body,
+            #root {
+              height: 100%;
+            }
+          `}
+        />
+        <Layout>
+          <Router />
+        </Layout>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 
