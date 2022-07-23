@@ -21,7 +21,6 @@ interface IRes {
 }
 
 const fetchList = async (pageParams: number, filter: string) => {
-  console.log(filter);
   let queryData = '';
   switch (filter) {
     case 'woman':
@@ -58,31 +57,34 @@ export const MainSummaries = (): JSX.Element => {
     }
   }, [inView]);
 
+  const deleteCharacter = (e: any) => {
+    if (e.target.tagName === 'BUTTON') {
+      console.log('delete', e.target.id);
+    }
+  };
+
   return (
-    <MainSumariesStyled>
-      {data?.pages.map((page, idx1) =>
+    <MainSumariesStyled onClick={deleteCharacter}>
+      {data?.pages.map(page =>
         page.data.map(
-          (
-            {
-              aliases,
-              allegiances,
-              books,
-              born,
-              culture,
-              died,
-              father,
-              gender,
-              mother,
-              name,
-              playedBy,
-              povBooks,
-              spouse,
-              titles,
-              tvSeries,
-              url,
-            },
-            idx2
-          ) => (
+          ({
+            aliases,
+            allegiances,
+            books,
+            born,
+            culture,
+            died,
+            father,
+            gender,
+            mother,
+            name,
+            playedBy,
+            povBooks,
+            spouse,
+            titles,
+            tvSeries,
+            url,
+          }) => (
             <Fragment key={nanoid(3)}>
               <Summary
                 aliases={aliases}
