@@ -9,7 +9,7 @@ interface IStyledProps {
 
 const FilterButtonStyled = styled.button<IStyledProps>(
   ({ checked }) => css`
-    background-color: ${checked ? colors.default_gray : 'blue'};
+    background-color: ${checked ? colors.default_gray : '#fffff3'};
   `
 );
 
