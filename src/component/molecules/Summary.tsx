@@ -8,7 +8,7 @@ const SummaryStyled = styled.div`
   display: flex;
   width: 80%;
   justify-content: space-between;
-  border: 1px solid ${colors.default_black};
+  border: 2px solid ${colors.default_black};
 
   height: 100px;
   padding: 10px;
