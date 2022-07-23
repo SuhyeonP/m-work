@@ -23,6 +23,15 @@
       ],
       "hook/*": [
         "hook/*"
+      ],
+      "style/*": [
+        "style/*"
+      ],
+      "component/*": [
+        "component/*"
+      ],
+      "util/*": [
+        "util/*"
       ]
     }
   },

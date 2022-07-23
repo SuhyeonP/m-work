@@ -23,6 +23,10 @@ export default defineConfig({
     alias: {
       hook: path.resolve(__dirname, 'src/hook'),
       pages: path.resolve(__dirname, 'src/pages'),
+      component: path.resolve(__dirname, 'src/component'),
+      style: path.resolve(__dirname, 'src/style'),
+      types: path.resolve(__dirname, 'src/types'),
+      util: path.resolve(__dirname, 'src/util'),
     },
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
   },
