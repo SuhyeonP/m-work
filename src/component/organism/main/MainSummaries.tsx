@@ -1,7 +1,10 @@
 import { Summary } from 'component/molecules';
 import styled from '@emotion/styled';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
+import { Information } from '../../../types';
+import { nanoid } from 'nanoid';
+import { useInView } from 'react-intersection-observer';
 
 const MainSumariesStyled = styled.div`
   display: flex;
@@ -10,21 +13,88 @@ const MainSumariesStyled = styled.div`
   justify-content: center;
 `;
 
+interface IRes {
+  page: number;
+  data: Information[];
+}
+
+const fetchList = async (pageParams: number) => {
+  const dd = await fetch(`https://www.anapioficeandfire.com/api/characters?page=${pageParams}&pageSize=10`).then(res =>
+    res.json()
+  );
+  const newPage = pageParams + 1;
+  return { data: dd, page: newPage, isLast: newPage === 10 };
+};
+
 export const MainSummaries = (): JSX.Element => {
-  const [page, setPage] = useState(1);
-  const { data } = useInfiniteQuery(['infos', page], () =>
-    fetch(`https://www.anapioficeandfire.com/api/characters?page=${page}&pageSize=10`).then(data => data.json())
+  const [ref, inView] = useInView();
+  const { data, isFetchingNextPage, fetchNextPage } = useInfiniteQuery<any, any, IRes>(
+    ['infos'],
+    ({ pageParam = 1 }) => fetchList(pageParam),
+    {
+      getNextPageParam: lastPage => (!lastPage.isLast ? lastPage.page : undefined),
+    }
   );
 
   useEffect(() => {
-    if (data) {
-      console.log(data);
+    if (inView) {
+      fetchNextPage();
     }
-  }, [data]);
+  }, [inView]);
 
   return (
     <MainSumariesStyled>
-      <Summary name="홍길동" aliases="test" title="title" books={3} tvSeries={2} id="12" />
+      {data?.pages.map((page, idx1) =>
+        page.data.map(
+          (
+            {
+              aliases,
+              allegiances,
+              books,
+              born,
+              culture,
+              died,
+              father,
+              gender,
+              mother,
+              name,
+              playedBy,
+              povBooks,
+              spouse,
+              titles,
+              tvSeries,
+              url,
+            },
+            idx2
+          ) => (
+            <Fragment key={nanoid(3)}>
+              <p>
+                {idx1}
+                {idx2}
+              </p>
+              <Summary
+                aliases={aliases}
+                allegiances={allegiances}
+                books={books}
+                born={born}
+                culture={culture}
+                died={died}
+                father={father}
+                gender={gender}
+                mother={mother}
+                name={name}
+                playedBy={playedBy}
+                povBooks={povBooks}
+                spouse={spouse}
+                titles={titles}
+                tvSeries={tvSeries}
+                url={url}
+              />
+            </Fragment>
+          )
+        )
+      )}
+      {isFetchingNextPage ? <p>loading</p> : <div ref={ref} />}
     </MainSumariesStyled>
   );
 };

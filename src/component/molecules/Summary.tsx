@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Button, Typography } from 'component/atom';
-import { ISummaryContent } from 'types';
+import { Information } from 'types';
 import { colors } from 'style/colors';
 
 const SummaryStyled = styled.div`
@@ -8,25 +8,27 @@ const SummaryStyled = styled.div`
   width: 80%;
   justify-content: space-between;
   border: 1px solid ${colors.default_black};
+
+  height: 100px;
 `;
 
-type IProps = ISummaryContent;
+type IProps = Information;
 
-export const Summary = ({ id, books, name, title, tvSeries, aliases }: IProps): JSX.Element => {
+export const Summary = ({ books, name, titles, tvSeries, aliases }: IProps): JSX.Element => {
   return (
     <SummaryStyled>
       <div>
         <div>
           <Typography content={name} />
-          <Typography content={aliases} />
+          <Typography content={aliases[0]} />
         </div>
-        <Typography content={title} />
+        <Typography content={titles.join(',')} />
         <div>
-          <Typography content={`books: ${books}`} />
-          <Typography content={`tvSeries: ${tvSeries}`} />
+          <Typography content={`books: ${books.length}`} />
+          <Typography content={`tvSeries: ${tvSeries.length}`} />
         </div>
       </div>
-      <Button content="삭제" id={String(id)} />
+      <Button content="삭제" id={String(name)} />
     </SummaryStyled>
   );
 };
