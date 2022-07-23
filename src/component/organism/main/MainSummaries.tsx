@@ -23,7 +23,7 @@ const fetchList = async (pageParams: number) => {
     res.json()
   );
   const newPage = pageParams + 1;
-  return { data: dd, page: newPage, isLast: newPage === 10 };
+  return { data: dd, page: newPage, isLast: newPage === 11 };
 };
 
 export const MainSummaries = (): JSX.Element => {
@@ -94,7 +94,7 @@ export const MainSummaries = (): JSX.Element => {
           )
         )
       )}
-      {isFetchingNextPage ? <p>loading</p> : <div ref={ref} />}
+      {isFetchingNextPage ? <p>loading</p> : <div ref={ref} style={{ margin: '10px' }} />}
     </MainSumariesStyled>
   );
 };
