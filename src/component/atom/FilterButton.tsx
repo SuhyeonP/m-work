@@ -1,15 +1,23 @@
+import { IFilterContent } from 'types';
 import styled from '@emotion/styled';
+import { css } from '@emotion/react';
+import { colors } from 'style/colors';
 
-const FilterButtonStyled = styled.input``;
-
-interface IProps {
-  content: string | number;
-  value: string | number;
+interface IStyledProps {
+  checked: boolean;
 }
 
-export const FilterButton = ({ content, value }: IProps): JSX.Element => {
+const FilterButtonStyled = styled.button<IStyledProps>(
+  ({ checked }) => css`
+    background-color: ${checked ? colors.default_gray : 'blue'};
+  `
+);
+
+type IProps = Partial<IStyledProps> & IFilterContent;
+
+export const FilterButton = ({ content, value, checked = false }: IProps): JSX.Element => {
   return (
-    <FilterButtonStyled value={value} type="radio">
+    <FilterButtonStyled id={String(value)} checked={checked} type="button">
       {content}
     </FilterButtonStyled>
   );

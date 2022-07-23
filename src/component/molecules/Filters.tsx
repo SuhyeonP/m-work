@@ -1,25 +1,31 @@
 import styled from '@emotion/styled';
 import { FilterButton } from 'component/atom';
+import { IFilterContent } from 'types';
+import { Dispatch, SetStateAction } from 'react';
 
 const FilterStyled = styled.div``;
 
-interface IFilterContent {
-  value: string | number;
-  content: string | number;
-}
-
 interface IProps {
   contents: IFilterContent[];
+  selected: number | string;
+  setSelected: Dispatch<SetStateAction<string | number>>;
 }
 
-export const Filters = ({ contents }: IProps): JSX.Element => {
+export const Filters = ({ contents, selected, setSelected }: IProps): JSX.Element => {
+  const checkEvent = (e: any) => {
+    setSelected(e.target.id);
+  };
+
   return (
-    <FilterStyled>
+    <FilterStyled onClick={checkEvent}>
       {contents.map(content => (
-        <FilterButton content={content.content} value={content.value} key={content.content} />
+        <FilterButton
+          content={content.content}
+          value={content.value}
+          key={content.content}
+          checked={selected === content.value}
+        />
       ))}
     </FilterStyled>
   );
 };
-
-export default Filters;
