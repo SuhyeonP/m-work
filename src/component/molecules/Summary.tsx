@@ -6,7 +6,7 @@ import { css } from '@emotion/react';
 
 const SummaryStyled = styled.div`
   display: flex;
-  width: 80%;
+  width: 100%;
   justify-content: space-between;
   border: 2px solid ${colors.default_black};
 

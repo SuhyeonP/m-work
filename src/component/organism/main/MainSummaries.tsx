@@ -1,10 +1,12 @@
 import { Summary } from 'component/molecules';
 import styled from '@emotion/styled';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect } from 'react';
 import { Information } from '../../../types';
 import { nanoid } from 'nanoid';
 import { useInView } from 'react-intersection-observer';
+import { useAtom } from 'jotai';
+import { filterAtom } from 'pages/Home';
 
 const MainSumariesStyled = styled.div`
   display: flex;
@@ -18,19 +20,33 @@ interface IRes {
   data: Information[];
 }
 
-const fetchList = async (pageParams: number) => {
-  const dd = await fetch(`https://www.anapioficeandfire.com/api/characters?page=${pageParams}&pageSize=10`).then(res =>
-    res.json()
-  );
+const fetchList = async (pageParams: number, filter: string) => {
+  console.log(filter);
+  let queryData = '';
+  switch (filter) {
+    case 'woman':
+      queryData = `&gender=${filter === 'woman' ? 'Female' : 'Male'}`;
+      break;
+    case 'alive':
+      queryData = `&isAlive=true`;
+      break;
+    default:
+      break;
+  }
+
+  const dd = await fetch(
+    `https://www.anapioficeandfire.com/api/characters?page=${pageParams}&pageSize=10${queryData}`
+  ).then(res => res.json());
   const newPage = pageParams + 1;
   return { data: dd, page: newPage, isLast: newPage === 11 };
 };
 
 export const MainSummaries = (): JSX.Element => {
+  const [filter] = useAtom(filterAtom);
   const [ref, inView] = useInView();
   const { data, isFetchingNextPage, fetchNextPage } = useInfiniteQuery<any, any, IRes>(
-    ['infos'],
-    ({ pageParam = 1 }) => fetchList(pageParam),
+    ['infos', filter],
+    ({ pageParam = 1 }) => fetchList(pageParam, filter),
     {
       getNextPageParam: lastPage => (!lastPage.isLast ? lastPage.page : undefined),
     }
@@ -68,10 +84,6 @@ export const MainSummaries = (): JSX.Element => {
             idx2
           ) => (
             <Fragment key={nanoid(3)}>
-              <p>
-                {idx1}
-                {idx2}
-              </p>
               <Summary
                 aliases={aliases}
                 allegiances={allegiances}
