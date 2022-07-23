@@ -10,16 +10,21 @@ interface IStyledProps {
 const TypographyStyled = styled.span<IStyledProps>(
   ({ font_size, font_weight, font_color }) => `
   font-size: ${font_size};
-  font-weigth: ${font_weight};
+  font-weight: ${font_weight};
   font-color: ${font_color};
 `
 );
 
-interface IProps extends IStyledProps {
+interface IProps extends Partial<IStyledProps> {
   content: string | number;
 }
 
-export const Typography = ({ content, font_size, font_weight, font_color }: IProps): JSX.Element => {
+export const Typography = ({
+  content,
+  font_size = '16px',
+  font_weight = 400,
+  font_color = 'default_gray',
+}: IProps): JSX.Element => {
   return (
     <TypographyStyled font_size={font_size} font_weight={font_weight} font_color={font_color}>
       {content}

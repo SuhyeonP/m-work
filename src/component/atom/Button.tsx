@@ -17,16 +17,18 @@ export const ButtonStyled = styled.button<IStyledProps>(
 
 interface IProps extends Partial<IStyledProps> {
   content: string | number;
+  id?: string;
 }
 
 export const Button = ({
+  id,
   content,
   border_radius = '4px',
   color = 'default_gray',
   background_color = 'default_white',
 }: IProps): JSX.Element => {
   return (
-    <ButtonStyled background_color={background_color} color={color} border_radius={border_radius}>
+    <ButtonStyled id={id} background_color={background_color} color={color} border_radius={border_radius}>
       {content}
     </ButtonStyled>
   );
