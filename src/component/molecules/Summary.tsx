@@ -41,9 +41,12 @@ const SummaryStyled = styled.div`
   }
 `;
 
-type IProps = Information;
+interface IProps extends Information {
+  where: string;
+}
 
-export const Summary = ({ books, name, titles, tvSeries, aliases }: IProps): JSX.Element => {
+export const Summary = (props: IProps): JSX.Element => {
+  const { name, aliases, titles, tvSeries, books, where } = props;
   return (
     <SummaryStyled>
       <div className="inner-content">
@@ -58,7 +61,7 @@ export const Summary = ({ books, name, titles, tvSeries, aliases }: IProps): JSX
         </div>
       </div>
       <div className="delete-button">
-        <Button content="삭제" id={String(name)} border_radius="20px" />
+        <Button content="삭제" id={where} border_radius="20px" />
       </div>
     </SummaryStyled>
   );
