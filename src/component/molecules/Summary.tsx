@@ -42,11 +42,11 @@ const SummaryStyled = styled.div`
 `;
 
 interface IProps extends Information {
-  where: string;
+  idx: number;
 }
 
 export const Summary = (props: IProps): JSX.Element => {
-  const { name, aliases, titles, tvSeries, books, where } = props;
+  const { name, aliases, titles, tvSeries, books, idx } = props;
   return (
     <SummaryStyled>
       <div className="inner-content">
@@ -61,7 +61,7 @@ export const Summary = (props: IProps): JSX.Element => {
         </div>
       </div>
       <div className="delete-button">
-        <Button content="삭제" id={where} border_radius="20px" />
+        <Button content="삭제" id={JSON.stringify(idx)} border_radius="20px" />
       </div>
     </SummaryStyled>
   );
