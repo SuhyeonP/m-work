@@ -14,7 +14,7 @@ const HomeStyled = styled.div`
   }
 `;
 
-export const filterAtom = atom('');
+export const filterAtom = atom<any[]>([]);
 
 const Home = (): JSX.Element => {
   return (

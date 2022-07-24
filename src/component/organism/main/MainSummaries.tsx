@@ -8,7 +8,7 @@ import { useInView } from 'react-intersection-observer';
 import { useAtom } from 'jotai';
 import { filterAtom } from 'pages/Home';
 
-const MainSumariesStyled = styled.div`
+const MainSummariesStyled = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -22,24 +22,20 @@ interface IRes {
   filter: string;
 }
 
-const fetchList = async (pageParams: number, filter: string) => {
+const fetchList = async (pageParams: number, filter: any[]) => {
   let queryData = '';
-  switch (filter) {
-    case 'woman':
-      queryData = `&gender=${filter === 'woman' ? 'Female' : 'Male'}`;
-      break;
-    case 'alive':
-      queryData = `&isAlive=true`;
-      break;
-    default:
-      break;
-  }
+
+  filter.forEach(option => {
+    if (option !== 'no-tv-series') {
+      queryData += `&${option}=${option === 'gender' ? 'Female' : 'true'}`;
+    }
+  });
 
   let dd: Information[] = await fetch(
     `https://www.anapioficeandfire.com/api/characters?page=${pageParams}&pageSize=10${queryData}`
   ).then(res => res.json());
   const newPage = pageParams + 1;
-  if (filter === 'no-tv-series') {
+  if (filter.includes('no-tv-series')) {
     dd = dd.filter(ele => ele.tvSeries[0] === '');
   }
   return { data: dd, page: newPage, isLast: newPage === 11, filter };
@@ -82,7 +78,7 @@ export const MainSummaries = (): JSX.Element => {
   );
 
   return (
-    <MainSumariesStyled onClick={deleteCharacter}>
+    <MainSummariesStyled onClick={deleteCharacter}>
       {datas.map((page, idx1) =>
         page.data.map(
           (
@@ -131,6 +127,6 @@ export const MainSummaries = (): JSX.Element => {
         )
       )}
       {isFetchingNextPage ? <p>loading</p> : <div ref={ref} style={{ margin: '10px' }} />}
-    </MainSumariesStyled>
+    </MainSummariesStyled>
   );
 };

@@ -5,11 +5,11 @@ import { filterAtom } from 'pages/Home';
 
 const options: IFilterContent[] = [
   {
-    value: 'alive',
+    value: 'isAlive',
     content: '생존인물만',
   },
   {
-    value: 'woman',
+    value: 'gender',
     content: '여자',
   },
   {
@@ -26,10 +26,17 @@ export const FilterMain = (): JSX.Element => {
   const [selected, setSelected] = useAtom(filterAtom);
 
   const setting = (e: any) => {
-    if (selected === e.target.id || e.target.id === 'reset') {
-      setSelected('');
+    if (e.target.id === 'reset') {
+      setSelected([]);
+    } else if (selected.includes(e.target.id)) {
+      setSelected(prev => {
+        prev.splice(prev.indexOf(e.target.id), 1);
+        return prev.map(ele => ele);
+      });
     } else {
-      setSelected(e.target.id);
+      setSelected(prev => {
+        return [...prev, e.target.id];
+      });
     }
   };
 
