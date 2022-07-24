@@ -1,23 +1,18 @@
 import styled from '@emotion/styled';
 import { FilterButton } from 'component/atom';
 import { IFilterContent } from 'types';
-import { Dispatch, SetStateAction } from 'react';
 
 const FilterStyled = styled.div``;
 
 interface IProps {
   contents: IFilterContent[];
   selected: number | string;
-  setSelected: Dispatch<SetStateAction<string | number>>;
+  setting: (e: any) => void;
 }
 
-export const Filters = ({ contents, selected, setSelected }: IProps): JSX.Element => {
-  const checkEvent = (e: any) => {
-    setSelected(e.target.id);
-  };
-
+export const Filters = ({ contents, selected, setting }: IProps): JSX.Element => {
   return (
-    <FilterStyled onClick={checkEvent}>
+    <FilterStyled onClick={setting}>
       {contents.map(content => (
         <FilterButton
           content={content.content}

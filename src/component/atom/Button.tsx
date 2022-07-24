@@ -48,6 +48,7 @@ export const Button = ({
       width={width}
       height={height}
       css={styles}
+      type="button"
     >
       {content}
     </ButtonStyled>

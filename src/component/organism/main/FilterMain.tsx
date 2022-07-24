@@ -1,6 +1,7 @@
 import { Filters } from 'component/molecules';
-import { useState } from 'react';
 import { IFilterContent } from 'types';
+import { useAtom } from 'jotai';
+import { filterAtom } from 'pages/Home';
 
 const options: IFilterContent[] = [
   {
@@ -22,7 +23,15 @@ const options: IFilterContent[] = [
 ];
 
 export const FilterMain = (): JSX.Element => {
-  const [selected, setSelected] = useState<any>();
+  const [selected, setSelected] = useAtom(filterAtom);
 
-  return <Filters contents={options} selected={selected} setSelected={setSelected} />;
+  const setting = (e: any) => {
+    if (selected === e.target.id || e.target.id === 'reset') {
+      setSelected('');
+    } else {
+      setSelected(e.target.id);
+    }
+  };
+
+  return <Filters contents={options} selected={selected} setting={setting} />;
 };

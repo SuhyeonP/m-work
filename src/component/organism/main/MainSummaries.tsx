@@ -1,10 +1,12 @@
 import { Summary } from 'component/molecules';
 import styled from '@emotion/styled';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { Information } from '../../../types';
 import { nanoid } from 'nanoid';
 import { useInView } from 'react-intersection-observer';
+import { useAtom } from 'jotai';
+import { filterAtom } from 'pages/Home';
 
 const MainSumariesStyled = styled.div`
   display: flex;
@@ -16,23 +18,45 @@ const MainSumariesStyled = styled.div`
 interface IRes {
   page: number;
   data: Information[];
+  isLast: boolean;
+  filter: string;
 }
 
-const fetchList = async (pageParams: number) => {
-  const dd = await fetch(`https://www.anapioficeandfire.com/api/characters?page=${pageParams}&pageSize=10`).then(res =>
-    res.json()
-  );
+const fetchList = async (pageParams: number, filter: string) => {
+  let queryData = '';
+  switch (filter) {
+    case 'woman':
+      queryData = `&gender=${filter === 'woman' ? 'Female' : 'Male'}`;
+      break;
+    case 'alive':
+      queryData = `&isAlive=true`;
+      break;
+    default:
+      break;
+  }
+
+  let dd: Information[] = await fetch(
+    `https://www.anapioficeandfire.com/api/characters?page=${pageParams}&pageSize=10${queryData}`
+  ).then(res => res.json());
   const newPage = pageParams + 1;
-  return { data: dd, page: newPage, isLast: newPage === 11 };
+  if (filter === 'no-tv-series') {
+    dd = dd.filter(ele => ele.tvSeries[0] === '');
+  }
+  return { data: dd, page: newPage, isLast: newPage === 11, filter };
 };
 
 export const MainSummaries = (): JSX.Element => {
+  const [filter] = useAtom(filterAtom);
   const [ref, inView] = useInView();
-  const { data, isFetchingNextPage, fetchNextPage } = useInfiniteQuery<any, any, IRes>(
-    ['infos'],
-    ({ pageParam = 1 }) => fetchList(pageParam),
+  const [datas, setDatas] = useState<IRes[]>([]);
+  const { isFetchingNextPage, fetchNextPage } = useInfiniteQuery<any, any, IRes>(
+    ['infos', filter],
+    ({ pageParam = 1 }) => fetchList(pageParam, filter),
     {
       getNextPageParam: lastPage => (!lastPage.isLast ? lastPage.page : undefined),
+      onSuccess: res => {
+        setDatas(res.pages);
+      },
     }
   );
 
@@ -42,9 +66,24 @@ export const MainSummaries = (): JSX.Element => {
     }
   }, [inView]);
 
+  const deleteCharacter = useCallback(
+    (e: any) => {
+      if (e.target.tagName === 'BUTTON') {
+        const [start, idx] = e.target.id.split('-').map((ele: string) => Number(ele));
+        setDatas(prev => {
+          const copy = prev[start].data.slice();
+          copy.splice(idx, 1);
+          prev[start].data = copy;
+          return prev;
+        });
+      }
+    },
+    [datas]
+  );
+
   return (
-    <MainSumariesStyled>
-      {data?.pages.map((page, idx1) =>
+    <MainSumariesStyled onClick={deleteCharacter}>
+      {datas.map((page, idx1) =>
         page.data.map(
           (
             {
@@ -68,10 +107,6 @@ export const MainSummaries = (): JSX.Element => {
             idx2
           ) => (
             <Fragment key={nanoid(3)}>
-              <p>
-                {idx1}
-                {idx2}
-              </p>
               <Summary
                 aliases={aliases}
                 allegiances={allegiances}
@@ -89,6 +124,7 @@ export const MainSummaries = (): JSX.Element => {
                 titles={titles}
                 tvSeries={tvSeries}
                 url={url}
+                where={`${idx1}-${idx2}`}
               />
             </Fragment>
           )

@@ -16,6 +16,7 @@ const FilterButtonStyled = styled.button<IStyledProps>(
     border: 0;
     margin: 5px;
     padding: 5px 10px;
+    font-size: 13px;
     border-radius: 4px;
   `
 );
