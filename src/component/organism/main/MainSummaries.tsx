@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
 import { useInView } from 'react-intersection-observer';
 import { useAtom } from 'jotai';
 import { filterAtom } from 'pages/Home';
+import { useLocation } from 'react-router-dom';
 
 const MainSummariesStyled = styled.div`
   display: flex;
@@ -40,14 +41,17 @@ const fetchList = async (pageParams: number, filter: any[]) => {
   }
   return { data: dd, page: newPage, isLast: newPage === 11, filter };
 };
+const testParam = new RegExp(/^\?page=/g);
 
 export const MainSummaries = (): JSX.Element => {
   const [filter] = useAtom(filterAtom);
   const [ref, inView] = useInView();
   const [datas, setDatas] = useState<Information[]>([]);
+  const location = useLocation();
+
   const { isFetchingNextPage, fetchNextPage } = useInfiniteQuery<any, any, IRes>(
-    ['infos', filter],
-    ({ pageParam = 1 }) => fetchList(pageParam, filter),
+    ['infos', filter, parseInt(location.search.split(testParam)[1]) || 1],
+    ({ pageParam = parseInt(location.search.split(testParam)[1]) || 1 }) => fetchList(pageParam, filter),
     {
       getNextPageParam: lastPage => (!lastPage.isLast ? lastPage.page : undefined),
       onSuccess: res => {
