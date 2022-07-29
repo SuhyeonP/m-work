@@ -1,14 +1,15 @@
 import { Summary } from 'component/molecules';
 import styled from '@emotion/styled';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { Fragment, useEffect, useState } from 'react';
 import { Information } from '../../../types';
 import { nanoid } from 'nanoid';
 import { useInView } from 'react-intersection-observer';
 import { useAtom } from 'jotai';
 import { filterAtom } from 'pages/Home';
+import { useLocation } from 'react-router-dom';
 
-const MainSumariesStyled = styled.div`
+const MainSummariesStyled = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -22,40 +23,43 @@ interface IRes {
   filter: string;
 }
 
-const fetchList = async (pageParams: number, filter: string) => {
+const fetchList = async (pageParams: number, filter: any[]) => {
   let queryData = '';
-  switch (filter) {
-    case 'woman':
-      queryData = `&gender=${filter === 'woman' ? 'Female' : 'Male'}`;
-      break;
-    case 'alive':
-      queryData = `&isAlive=true`;
-      break;
-    default:
-      break;
-  }
+
+  filter.forEach(option => {
+    if (option !== 'no-tv-series') {
+      queryData += `&${option}=${option === 'gender' ? 'Female' : 'true'}`;
+    }
+  });
 
   let dd: Information[] = await fetch(
     `https://www.anapioficeandfire.com/api/characters?page=${pageParams}&pageSize=10${queryData}`
   ).then(res => res.json());
   const newPage = pageParams + 1;
-  if (filter === 'no-tv-series') {
+  if (filter.includes('no-tv-series')) {
     dd = dd.filter(ele => ele.tvSeries[0] === '');
   }
   return { data: dd, page: newPage, isLast: newPage === 11, filter };
 };
+const testParam = new RegExp(/^\?page=/g);
 
 export const MainSummaries = (): JSX.Element => {
   const [filter] = useAtom(filterAtom);
   const [ref, inView] = useInView();
-  const [datas, setDatas] = useState<IRes[]>([]);
+  const [datas, setDatas] = useState<Information[]>([]);
+  const location = useLocation();
+
   const { isFetchingNextPage, fetchNextPage } = useInfiniteQuery<any, any, IRes>(
-    ['infos', filter],
-    ({ pageParam = 1 }) => fetchList(pageParam, filter),
+    ['infos', filter, parseInt(location.search.split(testParam)[1]) || 1],
+    ({ pageParam = parseInt(location.search.split(testParam)[1]) || 1 }) => fetchList(pageParam, filter),
     {
       getNextPageParam: lastPage => (!lastPage.isLast ? lastPage.page : undefined),
       onSuccess: res => {
-        setDatas(res.pages);
+        const copy: Information[] = [];
+        res.pages.forEach(ele => {
+          copy.push(...ele.data);
+        });
+        setDatas(copy);
       },
     }
   );
@@ -66,71 +70,62 @@ export const MainSummaries = (): JSX.Element => {
     }
   }, [inView]);
 
-  const deleteCharacter = useCallback(
-    (e: any) => {
-      if (e.target.tagName === 'BUTTON') {
-        const [start, idx] = e.target.id.split('-').map((ele: string) => Number(ele));
-        setDatas(prev => {
-          const copy = prev[start].data.slice();
-          copy.splice(idx, 1);
-          prev[start].data = copy;
-          return prev;
-        });
-      }
-    },
-    [datas]
-  );
+  const deleteCharacter = (e: any) => {
+    if (e.target.tagName === 'BUTTON') {
+      const copy = datas.slice();
+      copy.splice(parseInt(e.target.id), 1);
+      setDatas(copy);
+    }
+  };
 
   return (
-    <MainSumariesStyled onClick={deleteCharacter}>
-      {datas.map((page, idx1) =>
-        page.data.map(
-          (
-            {
-              aliases,
-              allegiances,
-              books,
-              born,
-              culture,
-              died,
-              father,
-              gender,
-              mother,
-              name,
-              playedBy,
-              povBooks,
-              spouse,
-              titles,
-              tvSeries,
-              url,
-            },
-            idx2
-          ) => (
-            <Fragment key={nanoid(3)}>
-              <Summary
-                aliases={aliases}
-                allegiances={allegiances}
-                books={books}
-                born={born}
-                culture={culture}
-                died={died}
-                father={father}
-                gender={gender}
-                mother={mother}
-                name={name}
-                playedBy={playedBy}
-                povBooks={povBooks}
-                spouse={spouse}
-                titles={titles}
-                tvSeries={tvSeries}
-                url={url}
-                where={`${idx1}-${idx2}`}
-              />
-            </Fragment>
-          )
+    <MainSummariesStyled onClick={deleteCharacter}>
+      {datas.map(
+        (
+          {
+            aliases,
+            allegiances,
+            books,
+            born,
+            culture,
+            died,
+            father,
+            gender,
+            mother,
+            name,
+            playedBy,
+            povBooks,
+            spouse,
+            titles,
+            tvSeries,
+            url,
+          },
+          idx
+        ) => (
+          <Fragment key={nanoid(3)}>
+            <Summary
+              aliases={aliases}
+              allegiances={allegiances}
+              books={books}
+              born={born}
+              culture={culture}
+              died={died}
+              father={father}
+              gender={gender}
+              mother={mother}
+              name={name}
+              playedBy={playedBy}
+              povBooks={povBooks}
+              spouse={spouse}
+              titles={titles}
+              tvSeries={tvSeries}
+              url={url}
+              idx={idx}
+            />
+          </Fragment>
         )
       )}
       {isFetchingNextPage ? <p>loading</p> : <div ref={ref} style={{ margin: '10px' }} />}
-    </MainSumariesStyled>
+    </MainSummariesStyled>
   );
 };

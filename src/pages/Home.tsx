@@ -14,7 +14,7 @@ const HomeStyled = styled.div`
   }
 `;
 
-export const filterAtom = atom('');
+export const filterAtom = atom<any[]>([]);
 
 const Home = (): JSX.Element => {
   return (
@@ -23,7 +23,7 @@ const Home = (): JSX.Element => {
         <Typography content="무신사 과제" font_size="22px" font_weight={600} font_color="default_black" />
       </div>
       <FilterMain />
-      <Suspense fallback={<>loading</>}>
+      <Suspense fallback={<>loading...</>}>
         <MainSummaries />
       </Suspense>
     </HomeStyled>

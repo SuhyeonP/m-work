@@ -6,7 +6,7 @@ const FilterStyled = styled.div``;
 
 interface IProps {
   contents: IFilterContent[];
-  selected: number | string;
+  selected: any[];
   setting: (e: any) => void;
 }
 
@@ -18,7 +18,7 @@ export const Filters = ({ contents, selected, setting }: IProps): JSX.Element =>
           content={content.content}
           value={content.value}
           key={content.content}
-          checked={selected === content.value}
+          checked={selected.includes(content.value)}
         />
       ))}
     </FilterStyled>
