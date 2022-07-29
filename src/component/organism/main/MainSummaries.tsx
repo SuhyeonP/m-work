@@ -1,8 +1,8 @@
 import { Summary } from 'component/molecules';
 import styled from '@emotion/styled';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { Fragment, useEffect, useState } from 'react';
-import { Information } from '../../../types';
+import { Information } from 'types';
 import { nanoid } from 'nanoid';
 import { useInView } from 'react-intersection-observer';
 import { useAtom } from 'jotai';
